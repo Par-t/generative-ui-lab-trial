@@ -6,10 +6,12 @@ export interface Hypothesis {
 
 // The structured JSON Claude returns every turn
 export interface ClaudeResponse {
-  hypotheses: Hypothesis[];  // 3-5 ranked guesses
-  reasoning: string;         // Why Claude updated its thinking
-  question: string;          // One strategic follow-up question
-  turnSummary: string;       // One sentence: what Claude learned this turn
+  hypotheses: Hypothesis[];                        // 3-5 ranked guesses
+  reasoning: string;                               // Why Claude updated its thinking
+  question: string;                                // One strategic follow-up question
+  turnSummary: string;                             // One sentence: what Claude learned this turn
+  status: "playing" | "solved" | "timeout";       // Game state — Claude sets this
+  finalAnswer?: string;                            // Only present when status is "solved"
 }
 
 // One turn of the game: the user's hint + Claude's response
