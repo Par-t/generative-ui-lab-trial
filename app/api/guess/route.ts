@@ -4,7 +4,7 @@ import { getSession, saveSession, saveCompletedGame } from "@/lib/redis";
 import { askClaude } from "@/lib/claude";
 import { GameSession } from "@/lib/types";
 
-const MAX_TURNS = 10;
+const MAX_TURNS = 20;
 
 export async function POST(req: NextRequest) {
   try {

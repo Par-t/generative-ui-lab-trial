@@ -1,20 +1,34 @@
-// What Claude thinks about the user — one guess with a confidence score
-export interface Hypothesis {
-  claim: string;       // e.g. "You work in healthcare"
+// A guess for one of the three target categories
+export interface CategoryGuess {
+  guess: string;       // e.g. "Software engineer" or "Lives in Mumbai"
   confidence: number;  // 0.0 to 1.0
 }
 
-// The structured JSON Claude returns every turn
-export interface ClaudeResponse {
-  hypotheses: Hypothesis[];                        // 3-5 ranked guesses
-  reasoning: string;                               // Why Claude updated its thinking
-  question: string;                                // One strategic follow-up question
-  turnSummary: string;                             // One sentence: what Claude learned this turn
-  status: "playing" | "solved" | "timeout";       // Game state — Claude sets this
-  finalAnswer?: string;                            // Only present when status is "solved"
+// Claude's guesses across the three categories it must solve
+export interface Guesses {
+  career: CategoryGuess;
+  family: CategoryGuess;
+  location: CategoryGuess;
 }
 
-// One turn of the game: the user's hint + Claude's response
+// The input UI Claude wants the frontend to render
+// After turn 1, only choice and slider are allowed — no text
+export type InputConfig =
+  | { type: "text"; placeholder: string }
+  | { type: "choice"; choices: string[] }
+  | { type: "slider"; min: number; max: number; minLabel: string; maxLabel: string };
+
+// The structured JSON Claude returns every turn
+export interface ClaudeResponse {
+  guesses: Guesses;                                // Current best guess per category
+  reasoning: string;                               // Why Claude updated its thinking
+  question: string;                                // One strategic follow-up question
+  turnSummary: string;                             // One sentence: what Claude learned
+  status: "playing" | "solved" | "timeout";       // Game state
+  input: InputConfig;                              // Claude decides how user answers next
+}
+
+// One turn of the game: the user's answer + Claude's response
 export interface GameTurn {
   turn: number;
   hint: string;
@@ -23,8 +37,8 @@ export interface GameTurn {
 
 // The full game session stored in Redis
 export interface GameSession {
-  id: string;            // UUID
-  turn: number;          // Current turn number
-  hints: string[];       // All hints the user has given
-  history: GameTurn[];   // Full turn-by-turn history
+  id: string;
+  turn: number;
+  hints: string[];
+  history: GameTurn[];
 }
